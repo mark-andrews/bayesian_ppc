@@ -40,3 +40,29 @@ affairs_df <- read_csv("https://raw.githubusercontent.com/mark-andrews/bayesian_
 M_1 <- brm(affairs ~ 1, 
            data = affairs_df, 
            family = poisson(link = 'log'))
+
+pp_check(M_1, type = 'bars', nsamples = NULL)
+
+S <- posterior_predict(M_1)
+dim(S)
+
+pp_check(M_1, type = 'hist', 
+         nsamples = 20,
+         binwidth = 1)
+
+# use all the predictors
+M_2 <- brm(affairs ~ ., 
+           data = affairs_df, 
+           family = poisson(link = 'log'))
+
+pp_check(M_2, type = 'bars', nsamples = NULL)
+
+S_2 <- posterior_predict(M_2)
+dim(S_2)
+
+# zero inflated model
+M_3 <- brm(bf(affairs ~ ., zi ~ . -affairs), 
+           data = affairs_df, 
+           family = zero_inflated_poisson(link = 'log'))
+
+pp_check(M_3, type = 'bars', nsamples = NULL)
